@@ -1,10 +1,15 @@
 # Imperativa: 
 
 > \> kubectl run nome-do-pod --image=nginx:latest
+
 > \> kubectl get pods || kubectl get pods -o wide
+
 > \> kubectl describe pod nome-do-pod
+
 > \> kubectl edit pod nome-do-pod
+
 > \> kubectl delete pod nome-do-pod || kubectl delete -f primeiro-pod.yaml
+
 > \> kubectl exec -it nome-do-pod -- bash
 
 # Declarativa: 
