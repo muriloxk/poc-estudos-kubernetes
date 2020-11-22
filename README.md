@@ -20,11 +20,11 @@
 apiVersion: v1
 kind: Pod
 metadata: 
-	name: primeiro-pod-declarativo
+ name: primeiro-pod-declarativo
 spec: 
-	containers:
-		-name: nginx-container
-		image: nginx:latest
+  containers:
+    -name: nginx-container
+    image: nginx:latest
 ```
 
 `> kubectl apply -f primeiro-pod.yaml`
