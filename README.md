@@ -90,7 +90,7 @@ spec:
     app: segundo-pod
   ports: 
     - port: 80  # Porta em que o service está ouvindo
-	  targetPort: 80 # Onde vai ser dispachado.
+    targetPort: 80 # Onde vai ser dispachado.
 ```
 
 `> kubectl apply -f pod-1.yaml`
