@@ -104,10 +104,10 @@ spec:
 `> curl <ip do svc-pod-2>:80`
 
 **Perguntas:** 
-1. E se eu tiver dois pods que possui a label para dar match com o selector do service? 
+1. E se eu tiver dois pods que possui a label para dar match com o selector do service? <br/>
 R: Parece que ele faz um Load balancing decidindo entre um dos dois pods. 
 
-2. E se eu derrubar o pod que está ouvindo o que eu acontece? 
+2. E se eu derrubar o pod que está ouvindo o que eu acontece? <br/>
 R: O service continua ativo, mas da erro de conexão por ninguém estar ouvindo.
 
 
