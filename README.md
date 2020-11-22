@@ -27,9 +27,8 @@ spec:
 
 -- Para validar o arquivo yaml (https://github.com/instrumenta/kubeval)
 
-#End Region
 
-#Region: Expondo pods com services (svc) 
+# Expondo pods com services (svc) 
 
 1. Abstrações para expor applicações executando um ou mais pods
 2. Proveem IP's fixos para comunicação
