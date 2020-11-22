@@ -1,11 +1,11 @@
 # Imperativa: 
 
-> > kubectl run nome-do-pod --image=nginx:latest
-> > kubectl get pods || kubectl get pods -o wide
-> > kubectl describe pod nome-do-pod
-> > kubectl edit pod nome-do-pod
-> > kubectl delete pod nome-do-pod || kubectl delete -f primeiro-pod.yaml
-> > kubectl exec -it nome-do-pod -- bash
+> \> kubectl run nome-do-pod --image=nginx:latest
+> \> kubectl get pods || kubectl get pods -o wide
+> \> kubectl describe pod nome-do-pod
+> \> kubectl edit pod nome-do-pod
+> \> kubectl delete pod nome-do-pod || kubectl delete -f primeiro-pod.yaml
+> \> kubectl exec -it nome-do-pod -- bash
 
 # Declarativa: 
 
@@ -23,7 +23,7 @@ spec:
 ----------------
 ```
 
-> > kubectl apply -f primeiro-pod.yaml
+> \> kubectl apply -f primeiro-pod.yaml
 
 -- Para validar o arquivo yaml (https://github.com/instrumenta/kubeval)
 
@@ -93,15 +93,15 @@ spec:
 -----------------
 ```
 
-> > kubectl apply -f pod-1.yaml
-> > kubectl apply -f pod-2.yaml
-> > kubectl apply -f svc-pod-2.yaml
+> \> kubectl apply -f pod-1.yaml
+> \> kubectl apply -f pod-2.yaml
+> \> kubectl apply -f svc-pod-2.yaml
 
-> > kubectl get svc 
-> > kubectl get pods
+> \> kubectl get svc 
+> \> kubectl get pods
 
-> > kubectl exec -it pod-1 -- bash
-> > curl <ip do svc-pod-2>:80
+> \> kubectl exec -it pod-1 -- bash
+> \> curl <ip do svc-pod-2>:80
 
 **Perguntas:** 
 1. E se eu tiver dois pods que possui a label para dar match com o selector do service? 
