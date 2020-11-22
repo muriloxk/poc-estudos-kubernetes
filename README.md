@@ -1,4 +1,6 @@
-# Imperativa: 
+# Criando e entendendo pods
+
+## Imperativa: 
 
 `> kubectl run nome-do-pod --image=nginx:latest`
 
@@ -12,7 +14,7 @@
 
 `> kubectl exec -it nome-do-pod -- bash`
 
-# Declarativa: 
+## Declarativa: 
 
 > file:  primeiro-pod.yaml
 
