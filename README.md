@@ -308,6 +308,8 @@ spec:
           name: app-configmap
 ```
 
+> Todos os exemplos até aqui estão na pasta "basico"
+
 
 
 
