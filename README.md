@@ -210,7 +210,33 @@ spec:
     app: primeiro-pod
 ```
 
+## Environment Variables
 
+Exemplo: 
+
+> cat \> exemplo.yaml
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: db-pod
+  labels:
+    app: db-pod
+spec:
+  containers:
+    -name: db-pod-container
+    image: enderecoregistry/mysql-db:1
+    ports:
+      - containerPort: 3306
+    env:
+      - name: "MYSQL_ROOT_PASSWORD"
+      value: "exemplo"
+      - name: "MYSQL_DATABASE"
+      value: "exemplo"
+      - name: "MYSQL_PASSWORD"
+      value: "exemplo"
+```
 
 
 
