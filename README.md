@@ -12,6 +12,10 @@
 
 `> kubectl delete pod nome-do-pod || kubectl delete -f primeiro-pod.yaml`
 
+`> kubectl delete pods --all`
+
+`> kubectl delete svc --all`
+
 `> kubectl exec -it nome-do-pod -- bash`
 
 ## Declarativa: 
