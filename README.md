@@ -170,9 +170,13 @@ spec:
 ```
 
 `> kubectl apply -f svc-pod-1.yaml`
+
 `> kubectl apply -f portal-noticias.yaml`
+
 `> kubectl apply -f pod-1.yaml`
+
 `> kubectl get svc`
+
 `> kubectl exec -it portal-noticias -- bash`
 
 `> curl <ip do node port/svc-pod-1>:80`
