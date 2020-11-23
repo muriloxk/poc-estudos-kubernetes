@@ -139,7 +139,7 @@ R: O service continua ativo, mas da erro de conexão por ninguém estar ouvindo.
 
 Abre a comunicação do nó com o mundo externo e também funcionam como ClusterIP.
 
-![Image of NodePort](node_port.png)
+<!-- ![Image of NodePort](node_port.png) -->
 
 > cat \> svc-pod-1.yaml
 
@@ -148,7 +148,6 @@ apiVersion: v1
 kind: Service
 metadata: 
   name: svc-pod-1
-
 spec:
   type: NodePort 
   ports:
@@ -210,9 +209,9 @@ spec:
     app: primeiro-pod
 ```
 
-## Environment Variables
+## ConfigMap e Environment Variables
 
-Exemplo: 
+Exemplo de variavéis de ambiente direto no arquivo yaml: 
 
 > cat \> exemplo.yaml
 
@@ -237,6 +236,26 @@ spec:
       - name: "MYSQL_PASSWORD"
       value: "exemplo"
 ```
+
+### Configurando ConfigMaps
+
+Um pod pode ter um ou mais config maps, os config maps podem ser reutilizado entre os pods.
+
+Exemplo de ConfigMap: 
+
+> cat \> db-configmap.yaml
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: db-configmap
+data:
+   MYSQL_ROOT_PASSWORD: "exemplo"
+   MYSQL_DATABASE: "exemplo"
+   MYSQL_PASSWORD: "exemplo"
+```
+
 
 
 
