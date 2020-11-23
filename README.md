@@ -241,6 +241,8 @@ spec:
 
 Um pod pode ter um ou mais config maps, os config maps podem ser reutilizado entre os pods.
 
+docs: https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/
+
 Exemplo de ConfigMap: 
 
 > cat \> db-configmap.yaml
@@ -254,6 +256,56 @@ data:
    MYSQL_ROOT_PASSWORD: "exemplo"
    MYSQL_DATABASE: "exemplo"
    MYSQL_PASSWORD: "exemplo"
+```
+
+
+> cat \> app-configmap.yaml
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-configmap
+data:
+  HOST_DB: "exemplo"
+  USER_DB: "root"
+  PASS_DB: "exemplo"
+```
+
+> cat \> exemplo.yaml
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: db-pod
+  labels:
+    app: db-pod
+spec:
+  containers:
+    -name: db-pod-container
+    image: enderecoregistry/mysql-db:1
+    ports:
+      - containerPort: 3306
+    # Modo uma a uma:
+    #env:
+      # - name: "MYSQL_ROOT_PASSWORD"
+      # valueFrom: 
+      #   configMapKeyRef:
+      #     name: db-configmap
+      #     key: MYSQL_ROOT_PASSWORD
+      # - name: "MYSQL_DATABASE"
+      # valueFrom: 
+      #   configMapKeyRef:
+      #     name: db-configmap
+      #     key: MYSQL_DATABASE
+
+      #Todas de uma vez:
+      envFrom:
+        - configMapRef:
+          name: db-configmap
+        - configMapRef:
+          name: app-configmap
 ```
 
 
