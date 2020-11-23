@@ -351,7 +351,9 @@ spec:
 ```
 
 `> kubectl apply -f nginx-deployment.yaml`
+
 `> kubectl get rs`
+
 `> kubectl get deployments`
 
 ### History/Versionamento do deployment
