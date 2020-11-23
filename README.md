@@ -40,13 +40,30 @@ spec:
 3. Proveem um DNS para um ou mais pods
 4. São capazes de fazer balanceamento de carga
 
-**Existem três tipos de serviço: ClusterIP, NodePort e LoadBalancer**
+## **Existem três tipos de serviço: ClusterIP, NodePort e LoadBalancer**
 
-1. **ClusterIP**: Fornece apenas comunicação interna do cluster. 
+### 1. **ClusterIP**: Fornece apenas comunicação interna do cluster. 
 
 Exemplo:
 Vamos criar dois pods (pod-1 e pod-2) e vamos criar um service para o pod-2 
 através de labels
+
+> file: portal-noticias.yaml
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: portal-noticias
+  labels:
+    app: portal-noticias
+spec:
+  containers:
+    - name: container-portal-noticias
+      image: nginx:latest
+      ports:
+        - containerPort: 80
+```
 
 > file: pod-1.yaml
 
@@ -109,6 +126,62 @@ R: Parece que ele faz um Load balancing decidindo entre um dos dois pods.
 
 2. E se eu derrubar o pod que está ouvindo o que eu acontece? <br/>
 R: O service continua ativo, mas da erro de conexão por ninguém estar ouvindo.
+
+### NodePort
+
+Abre a comunicação do nó com o mundo externo e também funcionam como ClusterIP.
+
+![Image of NodePort](node_port.png)
+
+> file: svc-pod-1.yaml
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata: 
+  name: svc-pod-1
+
+spec:
+  type: NodePort 
+  ports:
+    - port: 80  
+    # Como definimos apenas o port, ele define automaticamente
+    # o targer port para 80;
+    nodePort: 3000 #between 30000-32767
+  selector:
+    app: primeiro-pod
+```
+
+> file: pod-1.yaml 
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-1
+  labels:
+    app: primeiro-pod # inclui a label para ser selecionado.
+spec:
+  containers:
+    - name: container-pod-1
+      image: nginx:latest
+      ports:
+        - containerPort: 80
+```
+
+`> kubectl apply -f svc-pod-1.yaml`
+`> kubectl apply -f portal-noticias.yaml`
+`> kubectl apply -f pod-1.yaml`
+`> kubectl get svc`
+`> kubectl exec -it portal-noticias -- bash`
+
+`> curl <ip do node port/svc-pod-1>:80`
+
+
+
+
+
+
 
 
 

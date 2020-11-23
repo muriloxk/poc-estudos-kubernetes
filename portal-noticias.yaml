@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: pod-1
+  name: portal-noticias
   labels:
-    app: primeiro-pod
+    app: portal-noticias
 spec:
   containers:
-    - name: container-pod-1
+    - name: container-portal-noticias
       image: nginx:latest
       ports:
         - containerPort: 80
