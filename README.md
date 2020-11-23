@@ -310,6 +310,14 @@ spec:
 
 > Todos os exemplos até aqui estão na pasta "basico"
 
+## ReplicaSets e Deployments
+
+ [Image of NodePort](imgs/replica_set_deployments.png)
+
+Caso um pod falhe, por ser efemero, como criar outro para assumir o lugar de maneira automatica? 
+
+Para isso utilizamos o **Replica Set**, ele é uma estrutura que pode encapsular um ou mais pods. Logo um desses pods podem falhar e o replica set vai criar um novo automaticamente. 
+
 
 
 
