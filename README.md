@@ -312,7 +312,7 @@ spec:
 
 ## ReplicaSets e Deployments
 
- [Image of NodePort](imgs/replica_set_deployments.png)
+ ![Image of NodePort](imgs/replica_set_deployments.png)
 
 Caso um pod falhe, por ser efemero, como criar outro para assumir o lugar de maneira automatica? 
 
