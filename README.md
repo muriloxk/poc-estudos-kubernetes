@@ -314,12 +314,65 @@ spec:
 
  ![Image of NodePort](imgs/replica_set_deployments.png)
 
+### ReplicaSet
+
 Caso um pod falhe, por ser efemero, como criar outro para assumir o lugar de maneira automatica? 
 
-Para isso utilizamos o **Replica Set**, ele é uma estrutura que pode encapsular um ou mais pods. Logo um desses pods podem falhar e o replica set vai criar um novo automaticamente. 
+Para isso utilizamos o **Replica Set**, ele é uma estrutura que pode encapsular um ou mais pods. Logo um desses pods podem falhar e o replica set vai criar um novo automaticamente.
 
+### Deployment
 
+É uma camada acima do replica set, quando definimos um Deployment também definimos um replica set. 
 
+Exemplo: 
+> cat \> nginx-deployment.yaml
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  replicas: 3
+  template:
+    metadata:
+      name: nginx-pod
+      labels:
+        app: nginx-pod
+    spec:
+      containers:
+        - name: nginx-container
+          image: nginx:stable
+          ports:
+            - containerPort: 80
+  selector:
+    matchLabels:
+      app: nginx-pod
+```
+
+`> kubectl apply -f nginx-deployment.yaml`
+`> kubectl get rs`
+`> kubectl get deployments`
+
+### History/Versionamento do deployment
+
+Com o deployment ganhamos um histórico e versionamento das versões, exemplo:
+
+1. Executar a alteração e gravar no histórico:
+
+`> kubectl apply -f nome-deployment.yaml` --record
+
+2. Para criar um comentário sobre a causa de alteração
+
+`> kubectl annotate deployment <nome do deployment> kubernetes.io/change-cause="<Comentário sobre a causa da mudança>"`
+
+3. Comando para listar:
+
+`> kubectl rollout history deployment <nome do deployment>`
+
+Com isso podemos fazer um *"rollback"* de versões, chamando de **undo** 
+
+`> kubectl rollout undo deployment <nome do deployment> --to-revision=<identificador da revisão>`
 
 
 
