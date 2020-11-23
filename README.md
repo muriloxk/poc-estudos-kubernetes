@@ -16,7 +16,7 @@
 
 ## Declarativa: 
 
-> file:  primeiro-pod.yaml
+> cat \>  primeiro-pod.yaml
 
 ```yaml
 apiVersion: v1
@@ -48,7 +48,7 @@ Exemplo:
 Vamos criar dois pods (pod-1 e pod-2) e vamos criar um service para o pod-2 
 através de labels
 
-> file: portal-noticias.yaml
+> cat \> portal-noticias.yaml
 
 ```yaml
 apiVersion: v1
@@ -65,7 +65,7 @@ spec:
         - containerPort: 80
 ```
 
-> file: pod-1.yaml
+> cat \> pod-1.yaml
 
 ```yaml
 apiVersion: v1
@@ -80,7 +80,7 @@ spec:
         - containerPort: 80
 ```
 
-> file: pod-2.yaml
+> cat \> pod-2.yaml
 ```yaml
 apiVersion: v1
 kind: Pod
@@ -94,7 +94,7 @@ spec:
         - containerPort: 80
 ```
 
-> file: svc-pod-2.yaml
+> cat \> svc-pod-2.yaml
 
 ```yaml
 apiVersion: v1
@@ -111,13 +111,17 @@ spec:
 ```
 
 `> kubectl apply -f pod-1.yaml`
+
 `> kubectl apply -f pod-2.yaml`
+
 `> kubectl apply -f svc-pod-2.yaml`
 
 `> kubectl get svc` 
+
 `> kubectl get pods`
 
 `> kubectl exec -it pod-1 -- bash`
+
 `> curl <ip do svc-pod-2>:80`
 
 **Perguntas:** 
@@ -133,7 +137,7 @@ Abre a comunicação do nó com o mundo externo e também funcionam como Cluster
 
 ![Image of NodePort](node_port.png)
 
-> file: svc-pod-1.yaml
+> cat \> svc-pod-1.yaml
 
 ```yaml
 apiVersion: v1
@@ -152,7 +156,7 @@ spec:
     app: primeiro-pod
 ```
 
-> file: pod-1.yaml 
+> cat \> pod-1.yaml 
 
 ```yaml
 apiVersion: v1
@@ -180,6 +184,13 @@ spec:
 `> kubectl exec -it portal-noticias -- bash`
 
 `> curl <ip do node port/svc-pod-1>:80`
+
+
+### Load Balancer 
+
+Mesma funcionalidade que o NodePort, mas também faz balanceamento de carga.
+
+
 
 
 
