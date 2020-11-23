@@ -188,7 +188,25 @@ spec:
 
 ### Load Balancer 
 
-Mesma funcionalidade que o NodePort, mas também faz balanceamento de carga.
+Mesma funcionalidade que o NodePort, mas também faz balanceamento de carga e ele se integra com o cloud provider (Ex: AWS, Azure, Google Cloud..)
+
+> cat \> svc-pod-1-loadbalancer.yaml
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-pod-1-loadbalancer
+spec:
+  type: Loadbalancer
+  ports:
+    - port: 80
+      nodePort: 3000
+  selector:
+    app: primeiro-pod
+```
+
+
 
 
 
