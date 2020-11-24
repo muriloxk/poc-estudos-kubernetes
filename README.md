@@ -594,6 +594,247 @@ spec:
 
 `> kubectl apply -f pod-sc.yaml`
 
+### StateFul Set
+
+Funciona de forma bem semelhante ao um deployment, mas o conteudo não será perdido ao pod ser recriado. Cada *POD* irá ter um *PVC* e *PV*. 
+
+Caso um *POD* falhe, um novo será recriado com uma mesma identificação e ele se ligara ao mesmo *PVC* e *PV* do anterior.
+
+Exemplo: Ao criar um *StatefulSet* com containers utilizando o volume de um *PVC*, com um storage class do StateFul Set será criado um *PV* default *hostpath*. 
+
+> cat \> statefulset.yaml
+
+```yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: statefulset-exemplo
+spec: 
+  replica: 1
+  template:
+    metadata:
+      labels:
+        app: stateful-app
+      name: stateful-app-nome
+    spec:
+      containers:
+        - name: stateful-app-container
+          image: nginx:latest
+          ports:
+            - containerPort: 80
+          envFrom:
+            - configMapRef:
+                name: stateful-configmap
+          volumeMounts:
+            - name: volume-exemplo
+              mountPath: /var/www/html/uploads
+      volumes:
+        - name: volume-exemplo
+          persistentVolumeClaim:
+            claimName: pvc-statefulset
+  selector:
+    matchLabels:
+      app: stateful-app
+  serviceName: svc-statefulset-exemplo
+```
+
+`> kubectl apply -f statefulset.yaml`
+
+## Probes
+
+Sua principal utilização é mostrar para o Kubernetes a saude da aplicação dentro do pod. 
+
+### Liveness Probes
+
+Periodicamente ele vai chegar a saude da aplicação (httpResponseCode entre 200 a 400 é saudavel)
+
+> cat \> sfs-liveness-probe.yaml
+
+```yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: statefulset-exemplo
+spec: 
+  replica: 1
+  template:
+    metadata:
+      labels:
+        app: stateful-app
+      name: stateful-app-nome
+    spec:
+      containers:
+        - name: stateful-app-container
+          image: nginx:latest
+          ports:
+            - containerPort: 80
+          envFrom:
+            - configMapRef:
+                name: stateful-configmap
+          livenessProbe:
+            httpGet:
+              path: /healthcheck
+              port: 80
+            periodSeconds: 10
+            failureThreshold: 3
+            initialDelaySeconds: 20
+          volumeMounts:
+            - name: volume-exemplo
+              mountPath: /var/www/html/uploads
+      volumes:
+        - name: volume-exemplo
+          persistentVolumeClaim:
+            claimName: pvc-statefulset
+  selector:
+    matchLabels:
+      app: stateful-app
+  serviceName: svc-statefulset-exemplo
+```
+
+### Readiness Probes
+
+Garantir que o container do pod está pronto para receber requisições.
+
+> cat \> sfs-readness-probe.yaml
+
+```yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: statefulset-exemplo
+spec: 
+  replica: 1
+  template:
+    metadata:
+      labels:
+        app: stateful-app
+      name: stateful-app-nome
+    spec:
+      containers:
+        - name: stateful-app-container
+          image: nginx:latest
+          ports:
+            - containerPort: 80
+          envFrom:
+            - configMapRef:
+                name: stateful-configmap
+          livenessProbe:
+            httpGet:
+              path: /healthcheck
+              port: 80
+            periodSeconds: 10
+            failureThreshold: 3
+            initialDelaySeconds: 20
+          ## HERE
+          readinessProbe:
+            httpGet:
+              path: /healthcheck-readiness
+              port: 80
+            periodSeconds: 10
+            failureThreshold: 3
+            initialDelaySeconds: 20
+          ###
+          volumeMounts:
+            - name: volume-exemplo
+              mountPath: /var/www/html/uploads
+      volumes:
+        - name: volume-exemplo
+          persistentVolumeClaim:
+            claimName: pvc-statefulset
+  selector:
+    matchLabels:
+      app: stateful-app
+  serviceName: svc-statefulset-exemplo
+```
+
+## Horizontal Pod Auto Scaller (hpa)
+
+Componente que por base de metricas consigo escalar os pods.
+
+> cat \> statefulset-exemplo.yaml
+
+```yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: statefulset-exemplo
+spec: 
+  replica: 1
+  template:
+    metadata:
+      labels:
+        app: stateful-app
+      name: stateful-app-nome
+    spec:
+      containers:
+        - name: stateful-app-container
+          image: nginx:latest
+          ports:
+            - containerPort: 80
+          envFrom:
+            - configMapRef:
+                name: stateful-configmap
+          livenessProbe:
+            httpGet:
+              path: /healthcheck
+              port: 80
+            periodSeconds: 10
+            failureThreshold: 3
+            initialDelaySeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /healthcheck-readiness
+              port: 80
+            periodSeconds: 10
+            failureThreshold: 3
+            initialDelaySeconds: 20
+         ## HERE
+          resources:
+            requests:
+              cpu: 10m
+          volumeMounts:
+            - name: volume-exemplo
+              mountPath: /var/www/html/uploads
+      volumes:
+        - name: volume-exemplo
+          persistentVolumeClaim:
+            claimName: pvc-statefulset
+  selector:
+    matchLabels:
+      app: stateful-app
+  serviceName: svc-statefulset-exemplo
+```
+
+> cat \> autoscalling-hpa.yaml
+
+```yaml
+apiVersion: autoscalling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: statefulset-hpa
+spec:
+ # Aqui vem as informações de quem eu quero escalar
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: StatefulSet 
+    name: statefulset-exemplo
+  minReplicas: 1
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: utilization
+          averageUtilization: 50
+```
+
+`> kubectl apply -f statefulset-exemplo.yaml`
+
+`> kubectl apply -f autoscalling-hpa.yaml`
+
+> Todos os exemplos até aqui estão na pasta intermediario.
+
 
 
 

@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: statefulset-exemplo
+spec: 
+  replica: 1
+  template:
+    metadata:
+      labels:
+        app: stateful-app
+      name: stateful-app-nome
+    spec:
+      containers:
+        - name: stateful-app-container
+          image: nginx:latest
+          ports:
+            - containerPort: 80
+          envFrom:
+            - configMapRef:
+                name: stateful-configmap
+          volumeMounts:
+            - name: volume-exemplo
+              mountPath: /var/www/html/uploads
+      volumes:
+        - name: volume-exemplo
+          persistentVolumeClaim:
+            claimName: pvc-statefulset
+  selector:
+    matchLabels:
+      app: stateful-app
+  serviceName: svc-statefulset-exemplo
