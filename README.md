@@ -457,7 +457,7 @@ O **Persistent Volume** separa o armazenamento do pod. Seu ciclo de vida é inde
 
 É um pouco como o conceito de programação assíncrona de um promessa ou uma interface. PVC promete que em algum momento"traduza" para o volume de armazenamento que seu aplicativo poderá usar e uma das características definidas como classe, tamanho e modo de acesso.
 
-![Image of PersistentVolumes](pv-pvc.png)
+![Image of PersistentVolumes](imgs/pv-pvc.png)
 
 Exemplo:
 
