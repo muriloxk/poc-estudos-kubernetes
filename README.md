@@ -379,6 +379,7 @@ Com isso podemos fazer um *"rollback"* de versões, chamando de **undo**
 ## Persistindo dados com volumes (vol, pv, pvc sc)
 
 docs: https://kubernetes.io/docs/concepts/storage/volumes/
+microsoft docs: https://docs.microsoft.com/pt-br/azure/aks/concepts-storage#volumes
 
 ### vol
 
