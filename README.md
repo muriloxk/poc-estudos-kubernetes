@@ -380,6 +380,7 @@ Com isso podemos fazer um *"rollback"* de versões, chamando de **undo**
 
 docs: https://kubernetes.io/docs/concepts/storage/volumes/
 microsoft docs: https://docs.microsoft.com/pt-br/azure/aks/concepts-storage#volumes
+video explicação aprofundada e cases: youtube.com/watch?v=0swOh5C3OVM
 
 ### vol
 
@@ -455,6 +456,8 @@ O **Persistent Volume** separa o armazenamento do pod. Seu ciclo de vida é inde
 **PVC** é uma declaração de necessidade de armazenamento que pode em algum momento tornar-se disponível - como em vinculado a alguns reais PV.
 
 É um pouco como o conceito de programação assíncrona de um promessa ou uma interface. PVC promete que em algum momento"traduza" para o volume de armazenamento que seu aplicativo poderá usar e uma das características definidas como classe, tamanho e modo de acesso.
+
+![Image of PersistentVolumes](pv-pvc.png)
 
 Exemplo:
 
