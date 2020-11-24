@@ -382,7 +382,7 @@ docs: https://kubernetes.io/docs/concepts/storage/volumes/
 microsoft docs: https://docs.microsoft.com/pt-br/azure/aks/concepts-storage#volumes
 video explicação aprofundada e cases: youtube.com/watch?v=0swOh5C3OVM
 
-### vol
+### volumes
 
 Volumes possuem ciclos de vida independente dos containers, porém são dependentes do pod.
 
@@ -459,6 +459,10 @@ O **Persistent Volume** separa o armazenamento do pod. Seu ciclo de vida é inde
 
 ![Image of PersistentVolumes](imgs/pv-pvc2.png)
 
+E para que todas essas abstrações? 
+
+Desacoplamento da aplicação com a infraestrutura e posso separar os papeis responsaveis de administrador da infre e devops, um faz a claim e o administrador (especialista) cria a estrutura do volume.
+
 Exemplo:
 
 1. Pod com a necessidade de um storage/volume linkado ao um pvc.
@@ -529,6 +533,67 @@ spec:
 `> kubectl apply -f pod-pv.yaml` 
 
 5. Assim temos um pod utilizando como volume um disco da google cloud.
+
+### Utilizando Storage Classes
+
+Storage classes são utilizados pelo pvc para criar um disco e um pv dinamicamente.
+
+> cat \> sc.yaml
+
+```yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: slow
+provisioner: kubernetes.io/gce-pd
+parameters:
+  type: pd-standard
+  fstype: ext4
+  replication-type: none
+```
+
+> cat \> pvc-sc.yaml
+
+```yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-sc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: slow #linkando com o storage class criado.
+```
+
+> cat \> pod-sc.yaml
+
+```yaml 
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-sc
+spec:
+  containers:
+    - name: nginx-container
+      image: nginx:latest
+      volumeMounts:
+        - mountPath: /volume-dentro-do-container
+          name: primeiro-pv
+  volumes:
+    - name: primeiro-pv
+      persistentVolumeClaim:
+        claimName: pvc-sc
+```
+
+`> kubectl apply -f sc.yaml`
+
+`> kubectl apply -f pvc-sc.yaml`
+
+`> kubectl apply -f pod-sc.yaml`
+
 
 
 
