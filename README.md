@@ -376,6 +376,162 @@ Com isso podemos fazer um *"rollback"* de versões, chamando de **undo**
 
 `> kubectl rollout undo deployment <nome do deployment> --to-revision=<identificador da revisão>`
 
+## Persistindo dados com volumes (vol, pv, pvc sc)
+
+docs: https://kubernetes.io/docs/concepts/storage/volumes/
+
+### vol
+
+Volumes possuem ciclos de vida independente dos containers, porém são dependentes do pod.
+
+Exemplo: Um pod com dois containers, se um container falhar o pod ainda está vivo, logo o volume ainda resiste, já se os dois containers falharem, o pod vai ser destruido e o volume junto com ele.
+
+Possuimos várias integrações de volumes:
+
+- awsElasticBlockStore
+- azureDisk
+- azureFile
+- cephfs
+- cinder
+- configMap
+- downwardAPI
+- emptyDir
+- fc (fibre channel)
+- flocker (deprecated)
+- gcePersistentDisk
+- gitRepo (deprecated)
+- glusterfs
+- hostPath
+- iscsi
+- local
+- nfs
+- persistentVolumeClaim
+- portworxVolume
+- projected
+- quobyte
+- rbd
+- scaleIO (deprecated)
+- secret
+- storageOS
+- vsphereVolume
+
+Exemplo com hostPath, criando um pod com dois containers compartilhando um mesmo volume com binding para a maquina do host. 
+
+> cat \> pod-volume.yaml
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-volume
+spec:
+  containers:
+    - name: nginx-container
+      image: nginx:latest
+      volumeMounts:
+        - mountPath: /volume-dentro-do-container
+          name: primeiro-volume
+    - name: jenkins-container
+      image: jenkins:alpine
+      volumeMounts:
+        - mountPath: /volume-dentro-do-container
+          name: primeiro-volume
+  volumes:
+    - name: primeiro-volume
+      hostPath:
+        path: <algum diretorio do seu computador>
+        type: DirectoryOrCreate
+```
+
+*Observação: Nesse caso, caso seja deletado o pod, o volume também será excluido, porem, os arquivos que estão na maquina do host não.*
+
+### Persistent Volume and Persistent Volume Claim (pv, pvc) 
+
+O volume separa o armazenamento do recipiente. Seu ciclo de vida é acoplado a um pod. Ele permite reinicializações seguras de contêineres e compartilhamento de dados entre contêineres em um pod.
+
+O **Persistent Volume** separa o armazenamento do pod. Seu ciclo de vida é independente. Ele permite reinicializações seguras de pods e compartilhamento de dados entre eles.
+
+**PVC** é uma declaração de necessidade de armazenamento que pode em algum momento tornar-se disponível - como em vinculado a alguns reais PV.
+
+É um pouco como o conceito de programação assíncrona de um promessa ou uma interface. PVC promete que em algum momento"traduza" para o volume de armazenamento que seu aplicativo poderá usar e uma das características definidas como classe, tamanho e modo de acesso.
+
+Exemplo:
+
+1. Pod com a necessidade de um storage/volume linkado ao um pvc.
+
+> cat \> pod-pv.yaml
+
+``` yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-pv
+spec:
+  containers:
+    - name: nginx-container
+      image: nginx:latest
+      volumeMounts:
+        - mountPath: /volume-dentro-do-container
+          name: primeiro-pv
+  volumes:
+    - name: primeiro-pv
+      persistentVolumeClaim:
+        claimName: pvc-1
+```
+
+2. PVC declarando um *"contrato como se fosse uma interface"*
+
+> cat \> pvc.yaml
+
+``` yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-1
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: standard
+```
+
+3. PV declarado para atender o pvc e linkado ao um disco criado na google cloud
+
+> cat \> pv.yaml
+
+```yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-1
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  gcePersistentDisk:
+    pdName: pv-disk # nome do disco na google cloud
+  storageClassName: standard
+```
+
+4. Aplicando:
+
+`> kubectl apply -f pv.yaml` 
+
+`> kubectl apply -f pvc.yaml` 
+
+`> kubectl apply -f pod-pv.yaml` 
+
+5. Assim temos um pod utilizando como volume um disco da google cloud.
+
+
+
+
+
+
+
 
 
 
