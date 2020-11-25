@@ -29,6 +29,7 @@ Detecta mudanças de estado, quando um pod morre, ele tenta recuperar o stado do
 
 ### etcd
 tl;dr
+
 É uma loja de chave e valor do estado do cluster *(O cerebro)*, toda a mudança de estado de um *pod* por exemplo é armazenado/atualizado no etcd.
 
 Graças a ele o scheduler sabe onde colocar um *pod*, o controller manager detecta alterações de estado e queries feitas pela api server.
@@ -78,6 +79,12 @@ spec:
 3. Proveem um DNS para um ou mais pods
 4. São capazes de fazer balanceamento de carga
 5. Logo o ciclo de vida de um service não está ligado com o container ou pod não estão ligados.
+
+*Imagens de exemplo*
+
+![Image of resumao_top_commands](imgs/services1.png)
+
+![Image of resumao_top_commands](imgs/services2.png)
 
 ## **Existem três tipos de serviço: ClusterIP, NodePort e LoadBalancer**
 
@@ -170,11 +177,43 @@ R: Parece que ele faz um Load balancing decidindo entre um dos dois pods.
 2. E se eu derrubar o pod que está ouvindo o que eu acontece? <br/>
 R: O service continua ativo, mas da erro de conexão por ninguém estar ouvindo.
 
+#### Headless services
+
+Funciona como um DNS Lookup retornando o ip do POD
+
+Casos de uso, muito comum em StateFul Applications como banco de dados: 
+
+- Client quer fazer comunicação com um POD especifico diretamente
+- POD quer fazer comunicação com um POD especifico diretamente
+- Não pode ser randomicamente selecionado
+
+Exemplo:
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb-service-headless
+spec:
+  clusterIP: None
+  selector:
+    app: mongodb
+  ports:
+    - protocol: TCP
+      port: 27017
+      targetPort: 27017
+```
+
+
 ### NodePort
 
 Abre a comunicação do nó com o mundo externo e também funcionam como ClusterIP.
 
-<!-- ![Image of NodePort](node_port.png) -->
+Não são seguros por abrir uma comunicação direta com sua aplicação no pod.
+
+ ![Image of NodePort](nodeport.png)
+
+ ![Image of NodePort](nodeport.png)
 
 > cat \> svc-pod-1.yaml
 
@@ -223,10 +262,18 @@ spec:
 
 `> curl <ip do node port/svc-pod-1>:80`
 
-
 ### Load Balancer 
 
 Mesma funcionalidade que o NodePort, mas também faz balanceamento de carga e ele se integra com o cloud provider (Ex: AWS, Azure, Google Cloud..)
+
+ ![Image of NodePort](loadbalancer.png)
+
+ Quando criamos um Loadbalancer ele já faz o trabalho de criar um ClusterIP e NodePort:
+
+ - Loadbalancer service é uma extensão do NodePort
+ - NodePort service é uma extensão do ClusterIP 
+
+ ![Image of NodePort](wrap-up.png)
 
 > cat \> svc-pod-1-loadbalancer.yaml
 
@@ -648,6 +695,22 @@ Caso um *POD* falhe, um novo será recriado com uma mesma identificação e ele 
 Exemplo: Ao criar um *StatefulSet* com containers utilizando o volume de um *PVC*, com um storage class do StateFul Set será criado um *PV* default *hostpath*. 
 
 **Observação: Deployment são para aplicações sem estado, já StateFul set são para aplicações como bancos de dados**
+
+Aplicações de banco de dados por exemplo tem maiores dificuldades do que uma api em suas replicas, por exemplo: 
+
+- Não podem ser criadas ao mesmo tempo
+- Não podem ser endereçadas randomicamente
+- As replicas de pod não são identicas - Pod Identity
+
+![Image of PersistentVolumes](imgs/mysql_replica.png)
+
+** Pod Identity **
+
+- Uma identidade para cada POD.
+- Criado pela mesma especificação, mas não substituível. 
+- Identificador persistente em qualquer reprogramação.
+
+Quando escalamos horizontalmente o MySql, temos banco master (escrita/leitura) e os slaves apenas leitura, esses bancos precisam ser criados ou deletados em ordem e um banco só pode ser clonado a partir do anteirior está pronto e eles precisam sempre estar sincronizados. Caso um pod de banco morra, uma nova replica será criada e anexada na persistencia do antigo pod. 
 
 > cat \> statefulset.yaml
 
