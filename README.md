@@ -1,22 +1,56 @@
-# Criando e entendendo pods
+# Arquitetura Kubernetes
 
-## Imperativa: 
+## Nodes ou Worker Nodes: 
 
-`> kubectl run nome-do-pod --image=nginx:latest`
+- Cada node possui multiplos Pods
+- 3 processos devem ser instalados em cada node. 
+  - Container runtime.
+  - kubelet (Faz iteração com o container e o node)
+  - kube proxy *(https://kubernetes.io/docs/reference/command-line-tools-reference/kube-proxy/, tl;dr ele tem uma inteligencia de proxy e um exemplo disso é eviar sobrecargar de rede, mantendo comunicação entre pods do mesmo nó)*
+- Nós de trabalho fazem o trabalho real.
 
-`> kubectl get pods || kubectl get pods -o wide`
+## Master Node  
+4 processos são executados em cada nó master:
+  
+### Api Server (Cluster gateway)
+Através dele recebe commandos e querys, autenticação e outros processos.
+
+![Image of ApiServer](imgs/apiserver.png) 
+
+### Scheduler
+tl;dr Tem a inteligencia de ver entre os nós onde criar o pod.
+
+![Image of schedule](imgs/schedule.png) 
+
+### Controller Manager 
+tl;dr
+
+Detecta mudanças de estado, quando um pod morre, ele tenta recuperar o stado do cluster o mais rapido possivel e para isso ele faz uma requisição para o scheduler para subir novamente um pod no lugar.
+
+### etcd
+tl;dr
+É uma loja de chave e valor do estado do cluster *(O cerebro)*, toda a mudança de estado de um *pod* por exemplo é armazenado/atualizado no etcd.
+
+Graças a ele o scheduler sabe onde colocar um *pod*, o controller manager detecta alterações de estado e queries feitas pela api server.
+
+> Em caso de multiplos nós master, api server é balanceado e o etcd é distribuido entre eles.
+
+### Minikube
+
+![Image of minikube](imgs/minikube.png)
+
+Para testar localmente é necessário no linux utilizar minikube, assim você pode criar um cluster com nó master e worker. 
+
+### kubectl
+ É um cliente de linha de comando no qual podemos enviar comandos e queries para Api Server, exemplos:
+
+![Image of resumao_top_commands](imgs/resumao_top_commands.png)
+
+`> kubectl apply -f file.yaml`
+
+`> kubectl delete -f file.yaml`
 
 `> kubectl describe pod nome-do-pod`
-
-`> kubectl edit pod nome-do-pod`
-
-`> kubectl delete pod nome-do-pod || kubectl delete -f primeiro-pod.yaml`
-
-`> kubectl delete pods --all`
-
-`> kubectl delete svc --all`
-
-`> kubectl exec -it nome-do-pod -- bash`
 
 ## Declarativa: 
 
@@ -43,6 +77,7 @@ spec:
 2. Proveem IP's fixos para comunicação
 3. Proveem um DNS para um ou mais pods
 4. São capazes de fazer balanceamento de carga
+5. Logo o ciclo de vida de um service não está ligado com o container ou pod não estão ligados.
 
 ## **Existem três tipos de serviço: ClusterIP, NodePort e LoadBalancer**
 
@@ -237,11 +272,13 @@ spec:
       value: "exemplo"
 ```
 
-### Configurando ConfigMaps
+### Configurando ConfigMaps && Secrets
 
 Um pod pode ter um ou mais config maps, os config maps podem ser reutilizado entre os pods.
 
 docs: https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/
+
+Você também tem um componente chamado secret, para dados que não podem ser armazenados em plain text.
 
 Exemplo de ConfigMap: 
 
@@ -323,6 +360,14 @@ Para isso utilizamos o **Replica Set**, ele é uma estrutura que pode encapsular
 ### Deployment
 
 É uma camada acima do replica set, quando definimos um Deployment também definimos um replica set. 
+
+> *Observação: Podemos utilizar o seguinte comando para nos auxiliar em criar arquivos declarativos:*
+
+` > kubectl create deployment name --image=image [--dry-run] [options] `
+
+` > kubectl create deployment nginx-deployment --image=nginx `
+
+` > kubectl get deployment nginx-deployment -o yaml > nginx-deployment.yaml `
 
 Exemplo: 
 > cat \> nginx-deployment.yaml
@@ -601,6 +646,8 @@ Funciona de forma bem semelhante ao um deployment, mas o conteudo não será per
 Caso um *POD* falhe, um novo será recriado com uma mesma identificação e ele se ligara ao mesmo *PVC* e *PV* do anterior.
 
 Exemplo: Ao criar um *StatefulSet* com containers utilizando o volume de um *PVC*, com um storage class do StateFul Set será criado um *PV* default *hostpath*. 
+
+**Observação: Deployment são para aplicações sem estado, já StateFul set são para aplicações como bancos de dados**
 
 > cat \> statefulset.yaml
 
