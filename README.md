@@ -1,7 +1,6 @@
 # Arquitetura Kubernetes
 
 ## Nodes ou Worker Nodes: 
-
 - Cada node possui multiplos Pods
 - 3 processos devem ser instalados em cada node. 
   - Container runtime.
@@ -18,7 +17,9 @@ Através dele recebe commandos e querys, autenticação e outros processos.
 ![Image of ApiServer](imgs/apiserver.png) 
 
 ### Scheduler
-tl;dr Tem a inteligencia de ver entre os nós onde criar o pod.
+tl;dr 
+
+Tem a inteligencia de ver entre os nós onde criar o pod.
 
 ![Image of schedule](imgs/schedule.png) 
 
@@ -88,7 +89,7 @@ spec:
 
 ## **Existem três tipos de serviço: ClusterIP, NodePort e LoadBalancer**
 
-### 1. **ClusterIP**: Fornece apenas comunicação interna do cluster. 
+### **ClusterIP**: Fornece apenas comunicação interna do cluster. 
 
 Exemplo:
 Vamos criar dois pods (pod-1 e pod-2) e vamos criar um service para o pod-2 
@@ -127,6 +128,7 @@ spec:
 ```
 
 > cat \> pod-2.yaml
+
 ```yaml
 apiVersion: v1
 kind: Pod
@@ -944,6 +946,17 @@ spec:
 `> kubectl apply -f autoscalling-hpa.yaml`
 
 > Todos os exemplos até aqui estão na pasta intermediario.
+
+
+# EKS - Comming soon
+
+![Image of Describes](eks_cluster.png)
+
+![Image of Describes](Control_plane_worker_nodes.png)
+
+![Image of arquitetura eks](arquitetura_eks.png)
+
+![Image of arquitetura eks](eks-storage.png)
 
 
 
