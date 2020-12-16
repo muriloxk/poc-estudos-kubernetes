@@ -1,5 +1,7 @@
 # Arquitetura Kubernetes
 
+# DEVELOP
+
 ## Nodes ou Worker Nodes: 
 - Cada node possui multiplos Pods
 - 3 processos devem ser instalados em cada node. 
@@ -946,7 +948,6 @@ spec:
 `> kubectl apply -f autoscalling-hpa.yaml`
 
 > Todos os exemplos até aqui estão na pasta intermediario.
-
 
 # EKS - Comming soon
 
