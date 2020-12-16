@@ -1,8 +1,10 @@
 # Arquitetura Kubernetes
 
-# DEVELOP
+# DEVELOP2
+# DEVELOP3
+# DEVELOP4
 
-#FEATURE1
+#FEATURE2
 
 
 ## Nodes ou Worker Nodes: 
