@@ -1,10 +1,9 @@
 # Arquitetura Kubernetes
-
+# MOREONE
 # DEVELOP2
 # DEVELOP3
 # DEVELOP4
-
-#FEATURE2
+#FIX-FEATURE2
 
 
 ## Nodes ou Worker Nodes: 
